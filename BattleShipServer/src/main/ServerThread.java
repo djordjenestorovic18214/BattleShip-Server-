@@ -34,7 +34,6 @@ public class ServerThread extends Thread {
 			//receive starting position
 			Object o = inputStream.readObject();
 			player=(Player)o;
-			
 			// start of game
 						while (true) {
 							//outStreamToClient.println("•Your move: ");
