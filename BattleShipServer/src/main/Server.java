@@ -9,7 +9,7 @@ public class Server {
 	static ServerThread[] players = new ServerThread[2];
 	
 	public static void main(String[] args) {
-		int port = 7989;
+		int port = 5533;
 		
 		if(args.length >0)
 			port = Integer.parseInt(args[0]);

@@ -7,14 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.LinkedList;
 
 public class ServerThread extends Thread {
 	BufferedReader inStreamFromClient = null;
 	PrintStream outStreamToClient = null;
 	Socket communicationSocket = null;
 	ServerThread[] players;
-	ObjectInputStream inputStream;
-	ObjectOutputStream outputStream;
+	ObjectInputStream inputStream=null;
+	ObjectOutputStream outputStream=null;
 	Player player;
 	Move move;
 	//constructor
@@ -34,6 +35,8 @@ public class ServerThread extends Thread {
 			//receive starting position
 			Object o = inputStream.readObject();
 			player=(Player)o;
+			if(players[0]==this)players[0].outStreamToClient.println("FIRST");
+			if(players[1]==this)players[1].outStreamToClient.println("SECOND");
 			// start of game
 						while (true) {
 							//outStreamToClient.println("•Your move: ");
@@ -45,10 +48,14 @@ public class ServerThread extends Thread {
 							};
 							//check the move
 							if(hit(move)){ 
+								//for(int i=0;i<2;i++){
+									//if(players[i]==this)
 								players[0].outStreamToClient.println("HIT");
+								
 								players[1].outStreamToClient.println("HIT");
 							}
 							else{ 
+								
 								players[0].outStreamToClient.println("NOTHIT");
 								players[1].outStreamToClient.println("NOTHIT");
 							};
@@ -56,6 +63,29 @@ public class ServerThread extends Thread {
 							if(destroyed(move)){ 
 								players[0].outStreamToClient.println("DESTROYED");
 								players[1].outStreamToClient.println("DESTROYED");
+								
+								Ship ship=destroyedShip(move);
+								LinkedList<Move> destroyedShip=new LinkedList<Move>();
+								for(int i=0;i<2;i++){
+									if(players[i]==this){
+								for(Position p:ship.positions){
+								Move m=new Move(p);
+								destroyedShip.add(m);
+								}
+								int movesSent=0;
+								for(Move mo:destroyedShip){
+						
+								players[i].outputStream.writeObject(mo);
+								movesSent=movesSent+1;
+								if(movesSent==destroyedShip.size())
+									players[i].outStreamToClient.println("DA");
+								else
+									players[i].outStreamToClient.println("NE");
+									}
+									}
+									
+								}
+								
 							}
 							else{ 
 								players[0].outStreamToClient.println("NOTDESTROYED");
@@ -74,14 +104,28 @@ public class ServerThread extends Thread {
 
 							
 						}
+						
 						communicationSocket.close();
-		} catch (IOException e) {
+						} catch (IOException e) {
 			e.printStackTrace();
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private Ship destroyedShip(Move move2) {
+		for(int i=0;i<2;i++){
+			if(players[i]!=this){
+		for(Ship ship:players[i].player.startingPosition){
+			for(Position p:ship.positions){
+				if(p.getColumn()==move2.getIndexKolona()&&p.getRow()==move2.getIndexRed())return ship;
+			}
+		}
+			}
+		}
+		return null;
 	}
 
 	public boolean end() {
