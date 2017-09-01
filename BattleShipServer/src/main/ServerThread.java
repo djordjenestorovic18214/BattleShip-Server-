@@ -40,16 +40,20 @@ public class ServerThread extends Thread {
 			// start of game
 						while (true) {
 							//outStreamToClient.println("•Your move: ");
+						
+						
 							Object oo = inputStream.readObject();
+							
 							move=(Move) oo;
+							
 							//send move to opponent
 							for(int i=0;i<2;i++){
 								if(players[i]!=this)players[i].outputStream.writeObject(move);
 							};
 							//check the move
 							if(hit(move)){ 
-								//for(int i=0;i<2;i++){
-									//if(players[i]==this)
+								
+								
 								players[0].outStreamToClient.println("HIT");
 								
 								players[1].outStreamToClient.println("HIT");
@@ -64,27 +68,19 @@ public class ServerThread extends Thread {
 								players[0].outStreamToClient.println("DESTROYED");
 								players[1].outStreamToClient.println("DESTROYED");
 								
+							
+								
 								Ship ship=destroyedShip(move);
-								LinkedList<Move> destroyedShip=new LinkedList<Move>();
 								for(int i=0;i<2;i++){
 									if(players[i]==this){
-								for(Position p:ship.positions){
-								Move m=new Move(p);
-								destroyedShip.add(m);
-								}
-								int movesSent=0;
-								for(Move mo:destroyedShip){
-						
-								players[i].outputStream.writeObject(mo);
-								movesSent=movesSent+1;
-								if(movesSent==destroyedShip.size())
-									players[i].outStreamToClient.println("DA");
-								else
-									players[i].outStreamToClient.println("NE");
-									}
+									String response=players[i].inStreamFromClient.readLine();
+										players[i].outputStream.writeObject(ship);
+										players[i].outputStream.flush();
 									}
 									
 								}
+								
+								
 								
 							}
 							else{ 
@@ -94,8 +90,11 @@ public class ServerThread extends Thread {
 								
 
 						if (end()) {
+							
 							players[0].outStreamToClient.println("END");
-							players[1].outStreamToClient.println("END");
+							
+				    		players[1].outStreamToClient.println("END");
+				    		
 							break;}
 						else{
 							players[0].outStreamToClient.println("NOTEND");
