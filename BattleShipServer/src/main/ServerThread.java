@@ -35,8 +35,8 @@ public class ServerThread extends Thread {
 			//receive starting position
 			Object o = inputStream.readObject();
 			player=(Player)o;
-			if(players[0]==this)players[0].outStreamToClient.println("FIRST");
-			if(players[1]==this)players[1].outStreamToClient.println("SECOND");
+			if(players[0]==this)players[0].outStreamToClient.println("FIRST_"+players[1].player.getName());
+			if(players[1]==this)players[1].outStreamToClient.println("SECOND_"+players[0].player.getName());
 			// start of game
 						while (true) {
 							//outStreamToClient.println("•Your move: ");
