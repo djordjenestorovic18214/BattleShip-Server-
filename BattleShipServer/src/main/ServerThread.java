@@ -16,6 +16,7 @@ public class ServerThread extends Thread {
 	ServerThread[] players;
 	ObjectInputStream inputStream=null;
 	ObjectOutputStream outputStream=null;
+	boolean readyStart=false;
 	Player player;
 	Move move;
 	//constructor
@@ -33,10 +34,33 @@ public class ServerThread extends Thread {
 			inputStream = new ObjectInputStream(communicationSocket.getInputStream());
 			outputStream= new ObjectOutputStream(communicationSocket.getOutputStream());
 			//receive starting position
+			if(players[0]==this)players[0].outStreamToClient.println("FIRST");
+			if(players[1]==this){
+				players[1].outStreamToClient.println("SECOND");
+				players[0].outStreamToClient.println("NOW");
+				
+			}
 			Object o = inputStream.readObject();
 			player=(Player)o;
-			if(players[0]==this)players[0].outStreamToClient.println("FIRST_"+players[1].player.getName());
-			if(players[1]==this)players[1].outStreamToClient.println("SECOND_"+players[0].player.getName());
+			String ready=inStreamFromClient.readLine();
+			if(ready.startsWith("Ready"))readyStart=true;
+			
+			for(int i=0;i<2;i++){
+				if(players[i]!=this){
+					if(players[i].readyStart){
+						
+						outStreamToClient.println("Ready");
+				
+						players[i].outStreamToClient.println(player.getName());
+						outStreamToClient.println(players[i].player.getName());
+					}else
+						outStreamToClient.println("NotReady");
+				}
+			}
+			
+			
+			//if(players[0]==this)players[0].outStreamToClient.println("FIRST_"+players[1].player.getName());
+			//if(players[1]==this)players[1].outStreamToClient.println("SECOND_"+players[0].player.getName());
 			// start of game
 						while (true) {
 							//outStreamToClient.println("•Your move: ");
