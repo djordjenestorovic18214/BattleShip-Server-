@@ -7,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.LinkedList;
 
 public class ServerThread extends Thread {
 	BufferedReader inStreamFromClient = null;
@@ -19,7 +18,7 @@ public class ServerThread extends Thread {
 	boolean readyStart=false;
 	Player player;
 	Move move;
-	//constructor
+
 	public ServerThread(Socket socket, ServerThread[] players) {
 		communicationSocket = socket;
 		this.players = players;
@@ -58,14 +57,8 @@ public class ServerThread extends Thread {
 				}
 			}
 			
-			
-			//if(players[0]==this)players[0].outStreamToClient.println("FIRST_"+players[1].player.getName());
-			//if(players[1]==this)players[1].outStreamToClient.println("SECOND_"+players[0].player.getName());
 			// start of game
-						while (true) {
-							//outStreamToClient.println("•Your move: ");
-						
-						
+						while (true) {								
 							Object oo = inputStream.readObject();
 							
 							move=(Move) oo;
@@ -215,7 +208,6 @@ public class ServerThread extends Thread {
 				}
 			}
 			}
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
