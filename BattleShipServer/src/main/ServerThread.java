@@ -123,7 +123,9 @@ public class ServerThread extends Thread {
 						
 						communicationSocket.close();
 						} catch (IOException e) {
+							
 			e.printStackTrace();
+			System.exit(0);
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
